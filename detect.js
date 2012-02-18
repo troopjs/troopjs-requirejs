@@ -1,6 +1,5 @@
-/*
- * ! TroopJS detect
- * 
+/*!
+ * TroopJS RequireJS detect plug-in
  * @license TroopJS 0.0.1 Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
@@ -19,8 +18,7 @@ define([ "has", "text" ], function DetectModule(has, text) {
 
 		write : function(pluginName, moduleName, write, config) {
 			if (moduleName in buildMap) {
-				write.asModule(pluginName + "!" + moduleName,
-						"define(['has'], function (has) { " + buildMap[moduleName] + " });\n");
+				write.asModule(pluginName + "!" + moduleName, "define(['has'], function (has) { " + buildMap[moduleName] + " });\n");
 			}
 		}
 	};
