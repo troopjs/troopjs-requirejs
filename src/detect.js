@@ -12,7 +12,7 @@ define([ "has", "text" ], function DetectModule(has, text) {
 	return {
 		load : function(name, req, load, config) {
 			text.load(name, req, function(value) {
-				load(new Function("has", buildMap[name] = value)(has));
+				load(Function("has", buildMap[name] = value)(has));
 			}, config);
 		},
 

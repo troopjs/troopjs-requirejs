@@ -47,7 +47,7 @@ define([ "text" ], function TemplateModule(text) {
 			return REPLACE[token] || token;
 		}
 
-		return new Function("data", ("var o; o = \""
+		return Function("data", ("var o; o = \""
 		// Sanitize body before we start templating
 		+ body.replace(RE_SANITIZE, "")
 
