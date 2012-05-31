@@ -9,7 +9,7 @@
 /**
  * This plugin provides a template loader and compiler.
  */
-define(function TemplateModule(compile) {
+define(function TemplateModule() {
 	'use strict';
 
 	var FACTORIES = {
