@@ -1,12 +1,114 @@
 /*!
  * TroopJS RequireJS template plug-in
- * @license TroopJS 0.0.1 Copyright 2012, Mikael Karon <mikael@karon.se>
+ *
+ * parts of code from require-cs 0.4.0+ Copyright (c) 2010-2011, The Dojo Foundation
+ *
+ * @license TroopJS 0.0.2 Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
 /**
  * This plugin provides a template loader and compiler.
  */
-define([ "text" ], function TemplateModule(text) {
+define(function TemplateModule(compile) {
+	'use strict';
+
+	var FACTORIES = {
+		"node" : function () {
+			// Using special require.nodeRequire, something added by r.js.
+			var fs = require.nodeRequire("fs");
+
+			return function fetchText(path, callback) {
+				callback(fs.readFileSync(path, 'utf8'));
+			};
+		},
+
+		"browser" : function () {
+			// Would love to dump the ActiveX crap in here. Need IE 6 to die first.
+			var progIds = [ "Msxml2.XMLHTTP", "Microsoft.XMLHTTP", "Msxml2.XMLHTTP.4.0"];
+			var progId;
+			var XHR;
+			var i;
+
+			if (typeof XMLHttpRequest !== "undefined") {
+				XHR = XMLHttpRequest;
+			}
+			else find: {
+				for (i = 0; i < 3; i++) {
+					progId = progIds[i];
+
+					try {
+						XHR = ActiveXObject(progId);
+						break find;
+					} catch (e) {}
+				}
+
+				throw new Error("XHR: XMLHttpRequest not available");
+			}
+
+			return function fetchText(url, callback) {
+				var xhr = new XHR();
+				xhr.open('GET', url, true);
+				xhr.onreadystatechange = function (evt) {
+					// Do not explicitly handle errors, those should be
+					// visible via console output in the browser.
+					if (xhr.readyState === 4) {
+						callback(xhr.responseText);
+					}
+				};
+				xhr.send(null);
+			};
+		},
+
+		"rhino" : function () {
+			var encoding = "utf-8";
+			var lineSeparator = java.lang.System.getProperty("line.separator");
+
+			// Why Java, why is this so awkward?
+			return function fetchText(path, callback) {
+				var file = new java.io.File(path);
+				var input = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(file), encoding));
+				var stringBuffer = new java.lang.StringBuffer();
+				var line;
+				var content = "";
+
+				try {
+					line = input.readLine();
+
+					// Byte Order Mark (BOM) - The Unicode Standard, version 3.0, page 324
+					// http://www.unicode.org/faq/utf_bom.html
+
+					// Note that when we use utf-8, the BOM should appear as "EF BB BF", but it doesn't due to this bug in the JDK:
+					// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4508058
+					if (line && line.length() && line.charAt(0) === 0xfeff) {
+						// Eat the BOM, since we've already found the encoding on this file,
+						// and we plan to concatenating this buffer with others; the BOM should
+						// only appear at the top of a file.
+						line = line.substring(1);
+					}
+
+					stringBuffer.append(line);
+
+					while ((line = input.readLine()) !== null) {
+						stringBuffer.append(lineSeparator);
+						stringBuffer.append(line);
+					}
+					// Make sure we return a JavaScript string and not a Java string.
+					content = String(stringBuffer.toString()); // String
+				} finally {
+					input.close();
+				}
+
+				callback(content);
+			};
+		},
+
+		"borked" : function () {
+			return function fetchText() {
+				throw new Error("Environment unsupported.");
+			};
+		}
+	};
+
 	var RE_SANITIZE = /^[\n\t\r]+|[\n\t\r]+$/g;
 	var RE_BLOCK = /<%(=)?([\S\s]*?)%>/g;
 	var RE_TOKENS = /<%(\d+)%>/gm;
@@ -19,8 +121,6 @@ define([ "text" ], function TemplateModule(text) {
 		"\t" : "\\t",
 		"\r" : "\\r"
 	};
-
-	var buildMap = {};
 
 	/**
 	 * Compiles template
@@ -47,7 +147,7 @@ define([ "text" ], function TemplateModule(text) {
 			return REPLACE[token] || token;
 		}
 
-		return Function("data", ("var o; o = \""
+		return ("function template(data) { var o = \""
 		// Sanitize body before we start templating
 		+ body.replace(RE_SANITIZE, "")
 
@@ -60,29 +160,60 @@ define([ "text" ], function TemplateModule(text) {
 		// Replace tokens with script blocks
 		.replace(RE_TOKENS, tokensBlocks)
 
-		+ "\"; return o;")
+		+ "\"; return o; }")
 
 		// Clean
-		.replace(RE_CLEAN, EMPTY));
-	}
+		.replace(RE_CLEAN, EMPTY);
+	};
+
+	var buildMap = {};
+	var fetchText = FACTORIES[ typeof process !== "undefined" && process.versions && !!process.versions.node
+		? "node"
+		: (typeof window !== "undefined" && window.navigator && window.document) || typeof importScripts !== "undefined"
+			? "browser"
+			: typeof Packages !== "undefined"
+				? "rhino"
+				: "borked" ]();
 
 	return {
-		load : function(name, req, load, config) {
-			text.load(name, req, function(value) {
-				// Compile template and store in buildMap
-				var template = buildMap[name] = compile(value);
+		load: function (name, parentRequire, load, config) {
+			var path = parentRequire.toUrl(name);
 
-				// Set display name for debugging
-				template.displayName = name;
+			fetchText(path, function (text) {
+				try {
+					text = "define(function() { return " + compile(text, name, path, config.template) + "; })";
+				}
+				catch (err) {
+					err.message = "In " + path + ", " + err.message;
+					throw(err);
+				}
 
-				// Pass template to load
-				load(template);
-			}, config);
+				if (config.isBuild) {
+					buildMap[name] = text;
+				}
+
+				// IE with conditional comments on cannot handle the
+				// sourceURL trick, so skip it if enabled
+				/*@if (@_jscript) @else @*/
+				else {
+					text += "\n//@ sourceURL=" + path;
+				}
+				/*@end@*/
+
+				load.fromText(name, text);
+
+				// Give result to load. Need to wait until the module
+				// is fully parse, which will happen after this
+				// execution.
+				parentRequire([name], function (value) {
+					load(value);
+				});
+			});
 		},
 
-		write : function(pluginName, moduleName, write, config) {
-			if (moduleName in buildMap) {
-				write.asModule(pluginName + "!" + moduleName, "define(function () { return " + buildMap[moduleName].toString().replace(RE_SANITIZE, EMPTY) + ";});\n");
+		write: function (pluginName, name, write) {
+			if (buildMap.hasOwnProperty(name)) {
+				write.asModule(pluginName + "!" + name, buildMap[name]);
 			}
 		}
 	};
