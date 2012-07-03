@@ -196,7 +196,7 @@ define(function TemplateModule() {
 				// sourceURL trick, so skip it if enabled
 				/*@if (@_jscript) @else @*/
 				else {
-					text += "\n//@ sourceURL=" + path;
+					text += "\n//@ sourceURL='" + path +"'";
 				}
 				/*@end@*/
 
