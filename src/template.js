@@ -3,11 +3,8 @@
  *
  * parts of code from require-cs 0.4.0+ Copyright (c) 2010-2011, The Dojo Foundation
  *
- * @license TroopJS 0.0.2 Copyright 2012, Mikael Karon <mikael@karon.se>
+ * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
- */
-/**
- * This plugin provides a template loader and compiler.
  */
 define(function TemplateModule() {
 	'use strict';
