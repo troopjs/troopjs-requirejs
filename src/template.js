@@ -6,9 +6,9 @@
  * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
+/*jshint strict:false, smarttabs:true, laxbreak:true, newcap:false */
+/*global define:true */
 define(function TemplateModule() {
-	'use strict';
-
 	var FACTORIES = {
 		"node" : function () {
 			// Using special require.nodeRequire, something added by r.js.
@@ -29,14 +29,16 @@ define(function TemplateModule() {
 			if (typeof XMLHttpRequest !== "undefined") {
 				XHR = XMLHttpRequest;
 			}
-			else find: {
+			else {
 				for (i = 0; i < 3; i++) {
 					progId = progIds[i];
 
 					try {
 						XHR = ActiveXObject(progId);
-						break find;
-					} catch (e) {}
+						break;
+					}
+					catch (e) {
+					}
 				}
 
 				throw new Error("XHR: XMLHttpRequest not available");
@@ -161,7 +163,7 @@ define(function TemplateModule() {
 
 		// Clean
 		.replace(RE_CLEAN, EMPTY);
-	};
+	}
 
 	var buildMap = {};
 	var fetchText = FACTORIES[ typeof process !== "undefined" && process.versions && !!process.versions.node
