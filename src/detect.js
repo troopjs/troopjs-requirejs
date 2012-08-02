@@ -1,11 +1,10 @@
 /*!
  * TroopJS RequireJS detect plug-in
- * @license TroopJS 0.0.1 Copyright 2012, Mikael Karon <mikael@karon.se>
+ * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
-/**
- * This plugin provides a loader for hasjs detection.
- */
+/*jshint strict:false, smarttabs:true, evil:true */
+/*global define:true */
 define([ "has", "text" ], function DetectModule(has, text) {
 	var buildMap = {};
 

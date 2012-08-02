@@ -3,15 +3,12 @@
  *
  * parts of code from require-cs 0.4.0+ Copyright (c) 2010-2011, The Dojo Foundation
  *
- * @license TroopJS 0.0.2 Copyright 2012, Mikael Karon <mikael@karon.se>
+ * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
-/**
- * This plugin provides a template loader and compiler.
- */
+/*jshint strict:false, smarttabs:true, laxbreak:true, newcap:false */
+/*global define:true */
 define(function TemplateModule() {
-	'use strict';
-
 	var FACTORIES = {
 		"node" : function () {
 			// Using special require.nodeRequire, something added by r.js.
@@ -32,14 +29,16 @@ define(function TemplateModule() {
 			if (typeof XMLHttpRequest !== "undefined") {
 				XHR = XMLHttpRequest;
 			}
-			else find: {
+			else {
 				for (i = 0; i < 3; i++) {
 					progId = progIds[i];
 
 					try {
 						XHR = ActiveXObject(progId);
-						break find;
-					} catch (e) {}
+						break;
+					}
+					catch (e) {
+					}
 				}
 
 				throw new Error("XHR: XMLHttpRequest not available");
@@ -164,7 +163,7 @@ define(function TemplateModule() {
 
 		// Clean
 		.replace(RE_CLEAN, EMPTY);
-	};
+	}
 
 	var buildMap = {};
 	var fetchText = FACTORIES[ typeof process !== "undefined" && process.versions && !!process.versions.node
@@ -196,7 +195,7 @@ define(function TemplateModule() {
 				// sourceURL trick, so skip it if enabled
 				/*@if (@_jscript) @else @*/
 				else {
-					text += "\n//@ sourceURL=" + path;
+					text += "\n//@ sourceURL='" + path +"'";
 				}
 				/*@end@*/
 
