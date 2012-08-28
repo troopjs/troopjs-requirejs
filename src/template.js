@@ -6,7 +6,7 @@
  * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
-/*jshint strict:false, smarttabs:true, laxbreak:true, newcap:false */
+/*jshint strict:false, smarttabs:true, laxbreak:true, newcap:false, loopfunc:true */
 /*global define:true */
 define(function TemplateModule() {
 	var FACTORIES = {
