@@ -6,7 +6,7 @@
  * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
-/*jshint strict:false, smarttabs:true, laxbreak:true, newcap:false */
+/*jshint strict:false, smarttabs:true, laxbreak:true, newcap:false, loopfunc:true */
 /*global define:true */
 define(function TemplateModule() {
 	var FACTORIES = {
@@ -34,14 +34,19 @@ define(function TemplateModule() {
 					progId = progIds[i];
 
 					try {
-						XHR = ActiveXObject(progId);
+						new ActiveXObject(progId);
+						XHR = function(){
+							return new ActiveXObject(progId);
+						};
 						break;
 					}
 					catch (e) {
 					}
 				}
 
-				throw new Error("XHR: XMLHttpRequest not available");
+				if (!XHR){
+					throw new Error("XHR: XMLHttpRequest not available");
+				}
 			}
 
 			return function fetchText(url, callback) {
