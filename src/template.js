@@ -6,9 +6,9 @@
  * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
-/*jshint strict:false, smarttabs:true, laxbreak:true, newcap:false, loopfunc:true */
 /*global define:true, require:true */
 define(function TemplateModule() {
+	/*jshint strict:false, smarttabs:true, laxbreak:true, newcap:false, loopfunc:true */
 	var FACTORIES = {
 		"node" : function () {
 			// Using special require.nodeRequire, something added by r.js.
