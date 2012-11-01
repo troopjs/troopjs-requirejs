@@ -7,7 +7,7 @@
  * Released under the MIT license.
  */
 /*jshint strict:false, smarttabs:true, laxbreak:true, newcap:false, loopfunc:true */
-/*global define:true */
+/*global define:true, require:true */
 define(function TemplateModule() {
 	var FACTORIES = {
 		"node" : function () {
