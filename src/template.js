@@ -16,7 +16,12 @@ define(function TemplateModule() {
 			var fs = require.nodeRequire("fs");
 
 			return function fetchText(path, callback) {
-				callback(fs.readFileSync(path, 'utf8'));
+				var file = fs.readFileSync(path, 'utf8');
+				//Remove BOM (Byte Mark Order) from utf8 files if it is there.
+				if (file.indexOf('\uFEFF') === 0) {
+					file = file.substring(1);
+				}
+				callback(file);
 			};
 		},
 
@@ -129,7 +134,7 @@ define(function TemplateModule() {
 
 	/**
 	 * Compiles template
-	 * 
+	 *
 	 * @param body Template body
 	 * @returns {Function}
 	 */
