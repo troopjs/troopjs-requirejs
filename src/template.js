@@ -1,10 +1,8 @@
-/*!
- * TroopJS RequireJS template plug-in
+/**
+ * TroopJS requirejs/template
+ * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  *
- * parts of code from require-cs 0.4.0+ Copyright (c) 2010-2011, The Dojo Foundation
- *
- * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
- * Released under the MIT license.
+ * Parts of code from require-cs 0.4.0+ Copyright (c) 2010-2011, The Dojo Foundation
  */
 /*global define:false, require:false*/
 define(function TemplateModule() {
