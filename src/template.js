@@ -1,21 +1,25 @@
-/*!
- * TroopJS RequireJS template plug-in
+/**
+ * TroopJS requirejs/template
+ * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  *
- * parts of code from require-cs 0.4.0+ Copyright (c) 2010-2011, The Dojo Foundation
- *
- * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
- * Released under the MIT license.
+ * Parts of code from require-cs 0.4.0+ Copyright (c) 2010-2011, The Dojo Foundation
  */
-/*jshint strict:false, smarttabs:true, laxbreak:true, newcap:false, loopfunc:true */
-/*global define:true */
+/*global define:false, require:false*/
 define(function TemplateModule() {
+	/*jshint strict:false, smarttabs:true, laxbreak:true, newcap:false, loopfunc:true */
+
 	var FACTORIES = {
 		"node" : function () {
 			// Using special require.nodeRequire, something added by r.js.
 			var fs = require.nodeRequire("fs");
 
 			return function fetchText(path, callback) {
-				callback(fs.readFileSync(path, 'utf8'));
+				var file = fs.readFileSync(path, 'utf8');
+				//Remove BOM (Byte Mark Order) from utf8 files if it is there.
+				if (file.indexOf('\uFEFF') === 0) {
+					file = file.substring(1);
+				}
+				callback(file);
 			};
 		},
 
@@ -128,7 +132,7 @@ define(function TemplateModule() {
 
 	/**
 	 * Compiles template
-	 * 
+	 *
 	 * @param body Template body
 	 * @returns {Function}
 	 */
