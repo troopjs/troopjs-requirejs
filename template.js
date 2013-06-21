@@ -4,19 +4,19 @@
  *
  * Parts of code from require-cs 0.4.0+ Copyright (c) 2010-2011, The Dojo Foundation
  */
-/*global define:false, require:false*/
 define(function TemplateModule() {
-	/*jshint strict:false, smarttabs:true, laxbreak:true, newcap:false, loopfunc:true */
+	"use strict";
 
+	/*jshint rhino:true, node:true, wsh:true*/
 	var FACTORIES = {
 		"node" : function () {
 			// Using special require.nodeRequire, something added by r.js.
 			var fs = require.nodeRequire("fs");
 
 			return function fetchText(path, callback) {
-				var file = fs.readFileSync(path, 'utf8');
+				var file = fs.readFileSync(path, "utf8");
 				//Remove BOM (Byte Mark Order) from utf8 files if it is there.
-				if (file.indexOf('\uFEFF') === 0) {
+				if (file.indexOf("\uFEFF") === 0) {
 					file = file.substring(1);
 				}
 				callback(file);
@@ -24,6 +24,7 @@ define(function TemplateModule() {
 		},
 
 		"browser" : function () {
+			/*jshint nonew:false, loopfunc:true*/
 			// Would love to dump the ActiveX crap in here. Need IE 6 to die first.
 			var progIds = [ "Msxml2.XMLHTTP", "Microsoft.XMLHTTP", "Msxml2.XMLHTTP.4.0"];
 			var progId;
@@ -55,8 +56,8 @@ define(function TemplateModule() {
 
 			return function fetchText(url, callback) {
 				var xhr = new XHR();
-				xhr.open('GET', url, true);
-				xhr.onreadystatechange = function (evt) {
+				xhr.open("GET", url, true);
+				xhr.onreadystatechange = function () {
 					// Do not explicitly handle errors, those should be
 					// visible via console output in the browser.
 					if (xhr.readyState === 4) {
@@ -134,7 +135,7 @@ define(function TemplateModule() {
 	 * Compiles template
 	 *
 	 * @param body Template body
-	 * @returns {Function}
+	 * @returns {String}
 	 */
 	function compile(body) {
 		var blocks = [];
