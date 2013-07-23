@@ -1,5 +1,5 @@
 /**
-* TroopJS jquery/destroy
+* TroopJS requirejs/shadow
 * @license MIT http://troopjs.mit-license.org/ © Tristan Guo mailto:tristanguo@outlook.com
 */
 define([ "text" ], function (text) {
@@ -17,7 +17,7 @@ define([ "text" ], function (text) {
 
 		while (m = pattern.exec(hashVal)) {
 			if (m[1] === EXPORTS) {
-				scriptText += "\nreturn " + m[2]; + ";\n";
+				scriptText += ";\nreturn " + m[2] + ";\n";
 			}
 			else {
 				deps.push("'" + m[2] + "'");
@@ -27,23 +27,21 @@ define([ "text" ], function (text) {
 
 		return "define([ " + deps.join(", ") + " ], function (" + args.join(", ") + ") {\n"
 			+ scriptText
-			+ " });"
+			+ "});"
 	}
 
 	return {
 		load : function (name, req, onLoad, config) {
 
 			var hashVal;
-			var amdifiedText;
 			var m;
 
 			if (m = PATTERN.exec(name)) {
 				name = m[1];
 				hashVal = m[2];
 
-				text.get(req.toUrl(name + EXTENSION), function(text) {
-					amdifiedText = amdify(text, hashVal);
-					onLoad.fromText(name, amdifiedText);
+				text.get(req.toUrl(name + EXTENSION), function(data) {
+					onLoad.fromText(name, amdify(data, hashVal));
 				});
 			}
 			else {
