@@ -8,6 +8,7 @@ define([ "text" ], function (text) {
 	var EXPORTS = "exports";
 	var EXTENSION = ".js";
 	var PATTERN = /(.+?)#(.+)$/;
+	var REQUIRE_VERSION = require.version;
 
 	function amdify (scriptText, hashVal) {
 		var pattern = /([^=&]+)=([^&]+)/g;
@@ -41,13 +42,14 @@ define([ "text" ], function (text) {
 				hashVal = m[2];
 
 				text.get(req.toUrl(name + EXTENSION), function(data) {
-					onLoad.fromText(name, amdify(data, hashVal));
+					onLoad.fromText(name, amdify(data, hashVal));  
+					if (REQUIRE_VERSION < "2.1.0") {
+						req([ name ], onLoad);
+					}	
 				});
 			}
 			else {
-				req([ name ], function (module) {
-					onLoad(module);
-				}, onLoad.error);
+				req([ name ], onLoad);
 			}
 		}
 	};
