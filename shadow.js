@@ -33,24 +33,30 @@ define([ "text" ], function (text) {
 
 	return {
 		load : function (name, req, onLoad, config) {
-
 			var hashVal;
 			var m;
 
-			if (m = PATTERN.exec(name)) {
-				name = m[1];
-				hashVal = m[2];
+            if (config.isBuild) {
+                onLoad();
+            } else {
+                if (m = PATTERN.exec(name)) {
 
-				text.get(req.toUrl(name + EXTENSION), function(data) {
-					onLoad.fromText(name, amdify(data, hashVal));  
-					if (REQUIRE_VERSION < "2.1.0") {
-						req([ name ], onLoad);
-					}	
-				});
-			}
-			else {
-				req([ name ], onLoad);
-			}
+                    name = m[1];
+                    hashVal = m[2];
+                    text.get(req.toUrl(name + EXTENSION), function(data) {
+                        onLoad.fromText(name, amdify(data, hashVal));
+                        if (REQUIRE_VERSION < "2.1.0") {
+                            req([ name ], onLoad);
+                        }
+                    });
+
+                }
+                else {
+
+                    req([ name ], onLoad);
+
+                }
+            }
 		}
 	};
 });
