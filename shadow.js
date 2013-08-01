@@ -9,6 +9,7 @@ define([ "text" ], function (text) {
 	var EXTENSION = ".js";
 	var PATTERN = /(.+?)#(.+)$/;
 	var REQUIRE_VERSION = require.version;
+	var buildMap = {};
 
 	function amdify (scriptText, hashVal) {
 		var pattern = /([^=&]+)=([^&]+)/g;
@@ -33,7 +34,6 @@ define([ "text" ], function (text) {
 
 	return {
 		load : function (name, req, onLoad, config) {
-
 			var hashVal;
 			var m;
 
@@ -42,7 +42,14 @@ define([ "text" ], function (text) {
 				hashVal = m[2];
 
 				text.get(req.toUrl(name + EXTENSION), function(data) {
-					onLoad.fromText(name, amdify(data, hashVal));  
+					var compiled = amdify(data, hashVal);
+
+					if (config.isBuild) {
+						buildMap[name] = compiled;
+					}
+
+					onLoad.fromText(name, compiled);
+
 					if (REQUIRE_VERSION < "2.1.0") {
 						req([ name ], onLoad);
 					}	
@@ -50,6 +57,12 @@ define([ "text" ], function (text) {
 			}
 			else {
 				req([ name ], onLoad);
+			}
+		},
+
+		write : function (pluginName, moduleName, write) {
+			if (moduleName in buildMap) {
+				write("define('" + pluginName + "!" + moduleName + "', function () { return '" + buildMap[moduleName].toString() + "';});\n");
 			}
 		}
 	};
