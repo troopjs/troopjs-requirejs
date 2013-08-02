@@ -9,7 +9,7 @@ define([ "text" ], function (text) {
 	var EXPORTS = "exports";
 	var EXTENSION = ".js";
 	var PATTERN = /(.+?)#(.+)$/;
-	var EMPTY = "empty:"
+	var RE_EMPTY = /^empty:/;
 	var REQUIRE_VERSION = require.version;
 	var buildMap = {};
 
@@ -57,6 +57,7 @@ define([ "text" ], function (text) {
 			var m;
 			var hashVal;
 			var content;
+			var url;
 
 			// The name is like 'jquery.form#$=jquery&exports=$',
 			// So, if macthed, m[1] is 'jquery.form', m[2] is '$=jquery&exports=$'
@@ -64,25 +65,27 @@ define([ "text" ], function (text) {
 				name = m[1];
 				hashVal = m[2];
 			}
+			url = req.toUrl(name + EXTENSION);
 
-			// For Optimization. The name is "empty:" if excluded.
-			if (name === EMPTY) {
+			// For Optimization. The url is "empty:" if excluded.
+			if (RE_EMPTY.test(url)) {
 				onLoad(UNDEFINED);
 			}
+			else {
+				text.get(url, function(data) {
+					content = amdify(data, hashVal);
+					if (config.isBuild) {
+						buildMap[name] = content;
+					}
 
-			text.get(req.toUrl(name + EXTENSION), function(data) {
-				content = amdify(data, hashVal);
-				if (config.isBuild) {
-					buildMap[name] = content;
-				}
-
-				onLoad.fromText(name, content);  
-				// On requirejs version below '2.1.0', 
-				// need to manually require the module after the call to onLoad.fromText()
-				if (cmpVersion(REQUIRE_VERSION, "2.1.0") < 0) {
-					req([ name ], onLoad);
-				}	
-			});
+					onLoad.fromText(name, content);  
+					// On requirejs version below '2.1.0', 
+					// need to manually require the module after the call to onLoad.fromText()
+					if (cmpVersion(REQUIRE_VERSION, "2.1.0") < 0) {
+						req([ name ], onLoad);
+					}	
+				});
+			}
 		},
 
 		write : function (pluginName, moduleName, write) { 
