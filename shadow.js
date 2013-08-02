@@ -5,19 +5,21 @@
 define([ "text" ], function (text) {
 	"use strict";
 
+	var UNDEFINED;
 	var EXPORTS = "exports";
 	var EXTENSION = ".js";
 	var PATTERN = /(.+?)#(.+)$/;
+	var RE_EMPTY = /^empty:/;
 	var REQUIRE_VERSION = require.version;
 	var buildMap = {};
 
 	function amdify (scriptText, hashVal) {
 		var pattern = /([^=&]+)=([^&]+)/g;
+		var m;
 		var deps = [];
 		var args = [];
-		var m;
 
-		while (m = pattern.exec(hashVal)) {
+		while (hashVal && (m = pattern.exec(hashVal))) {
 			if (m[1] === EXPORTS) {
 				scriptText += ";\nreturn " + m[2] + ";\n";
 			}
@@ -32,37 +34,71 @@ define([ "text" ], function (text) {
 			+ "});"
 	}
 
+	function cmpVersion(a, b) {
+	    var result;
+	    var len;
+	    var i;
+
+	    a = a.split(".");
+	    b = b.split(".");
+	    len = Math.min(a.length, b.length);
+
+	    for (i = 0; i < len; i++) {
+	        result = parseInt(a[i]) - parseInt(b[i]);
+	        if (result !== 0) {
+	            return result;
+	        }
+	    }
+	    return a.length - b.length;
+	}
+
 	return {
 		load : function (name, req, onLoad, config) {
-			var hashVal;
 			var m;
+			var hashVal;
+			var content;
+			var url;
 
+			// The name is like 'jquery.form#$=jquery&exports=$',
+			// So, if macthed, m[1] is 'jquery.form', m[2] is '$=jquery&exports=$'
 			if (m = PATTERN.exec(name)) {
 				name = m[1];
 				hashVal = m[2];
+			}
+			url = req.toUrl(name + EXTENSION);
 
-				text.get(req.toUrl(name + EXTENSION), function(data) {
-					var compiled = amdify(data, hashVal);
-
+			// For Optimization. The url is "empty:" if excluded.
+			if (RE_EMPTY.test(url)) {
+				onLoad(UNDEFINED);
+			}
+			else {
+				text.get(url, function(data) {
+					content = amdify(data, hashVal);
 					if (config.isBuild) {
-						buildMap[name] = compiled;
+						buildMap[name] = content;
 					}
 
-					onLoad.fromText(name, compiled);
-
-					if (REQUIRE_VERSION < "2.1.0") {
+					onLoad.fromText(name, content);  
+					// On requirejs version below '2.1.0', 
+					// need to manually require the module after the call to onLoad.fromText()
+					if (cmpVersion(REQUIRE_VERSION, "2.1.0") < 0) {
 						req([ name ], onLoad);
 					}	
 				});
 			}
-			else {
-				req([ name ], onLoad);
-			}
 		},
 
-		write : function (pluginName, moduleName, write) {
+		write : function (pluginName, moduleName, write) { 
+			var m;
+			var content;
+
+			if (m = PATTERN.exec(moduleName)) {
+				moduleName = m[1];
+			}
+
 			if (moduleName in buildMap) {
-				write("define('" + pluginName + "!" + moduleName + "', function () { return '" + buildMap[moduleName].toString() + "';});\n");
+				content = text.jsEscape(buildMap[moduleName]);
+				write.asModule(pluginName + "!" + moduleName, content);
 			}
 		}
 	};
