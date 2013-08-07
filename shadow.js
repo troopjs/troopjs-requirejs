@@ -31,25 +31,25 @@ define([ "text" ], function (text) {
 
 		return "define([ " + deps.join(", ") + " ], function (" + args.join(", ") + ") {\n"
 			+ scriptText
-			+ "});"
+			+ "});";
 	}
 
 	function cmpVersion(a, b) {
-	    var result;
-	    var len;
-	    var i;
+		var result;
+		var len;
+		var i;
 
-	    a = a.split(".");
-	    b = b.split(".");
-	    len = Math.min(a.length, b.length);
+		a = a.split(".");
+		b = b.split(".");
+		len = Math.min(a.length, b.length);
 
-	    for (i = 0; i < len; i++) {
-	        result = parseInt(a[i]) - parseInt(b[i]);
-	        if (result !== 0) {
-	            return result;
-	        }
-	    }
-	    return a.length - b.length;
+		for (i = 0; i < len; i++) {
+			result = parseInt(a[i], null) - parseInt(b[i], null);
+			if (result !== 0) {
+				return result;
+			}
+		}
+		return a.length - b.length;
 	}
 
 	return {
@@ -61,7 +61,7 @@ define([ "text" ], function (text) {
 
 			// The name is like 'jquery.form#$=jquery&exports=$',
 			// So, if macthed, m[1] is 'jquery.form', m[2] is '$=jquery&exports=$'
-			if (m = PATTERN.exec(name)) {
+			if ((m = PATTERN.exec(name))) {
 				name = m[1];
 				hashVal = m[2];
 			}
@@ -92,7 +92,7 @@ define([ "text" ], function (text) {
 			var m;
 			var content;
 
-			if (m = PATTERN.exec(moduleName)) {
+			if ((m = PATTERN.exec(moduleName))) {
 				moduleName = m[1];
 			}
 
