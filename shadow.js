@@ -71,20 +71,21 @@ define([ "text" ], function (text) {
 			if (RE_EMPTY.test(url)) {
 				onLoad(UNDEFINED);
 			}
+			else {
+				text.get(url, function(data) {
+					content = amdify(data, hashVal);
+					if (config.isBuild) {
+						buildMap[name] = content;
+					}
 
-			text.get(url, function(data) {
-				content = amdify(data, hashVal);
-				if (config.isBuild) {
-					buildMap[name] = content;
-				}
-
-				onLoad.fromText(name, content);  
-				// On requirejs version below '2.1.0', 
-				// need to manually require the module after the call to onLoad.fromText()
-				if (cmpVersion(REQUIRE_VERSION, "2.1.0") < 0) {
-					req([ name ], onLoad);
-				}	
-			});
+					onLoad.fromText(name, content);  
+					// On requirejs version below '2.1.0', 
+					// need to manually require the module after the call to onLoad.fromText()
+					if (cmpVersion(REQUIRE_VERSION, "2.1.0") < 0) {
+						req([ name ], onLoad);
+					}	
+				});
+			}
 		},
 
 		write : function (pluginName, moduleName, write) { 
