@@ -67,7 +67,7 @@ define([ "text" ], function (text) {
 			}
 			url = req.toUrl(name + EXTENSION);
 
-			// For Optimization. The name is "empty:" if excluded.
+			// For Optimization. The url is "empty:" if excluded.
 			if (RE_EMPTY.test(url)) {
 				onLoad(UNDEFINED);
 			}
