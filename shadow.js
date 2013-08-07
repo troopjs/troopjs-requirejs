@@ -31,25 +31,25 @@ define([ "text" ], function (text) {
 
 		return "define([ " + deps.join(", ") + " ], function (" + args.join(", ") + ") {\n"
 			+ scriptText
-			+ "});"
+			+ "});";
 	}
 
 	function cmpVersion(a, b) {
-	    var result;
-	    var len;
-	    var i;
+		var result;
+		var len;
+		var i;
 
-	    a = a.split(".");
-	    b = b.split(".");
-	    len = Math.min(a.length, b.length);
+		a = a.split(".");
+		b = b.split(".");
+		len = Math.min(a.length, b.length);
 
-	    for (i = 0; i < len; i++) {
-	        result = parseInt(a[i]) - parseInt(b[i]);
-	        if (result !== 0) {
-	            return result;
-	        }
-	    }
-	    return a.length - b.length;
+		for (i = 0; i < len; i++) {
+			result = parseInt(a[i], null) - parseInt(b[i], null);
+			if (result !== 0) {
+				return result;
+			}
+		}
+		return a.length - b.length;
 	}
 
 	return {
@@ -61,38 +61,37 @@ define([ "text" ], function (text) {
 
 			// The name is like 'jquery.form#$=jquery&exports=$',
 			// So, if macthed, m[1] is 'jquery.form', m[2] is '$=jquery&exports=$'
-			if (m = PATTERN.exec(name)) {
+			if ((m = PATTERN.exec(name))) {
 				name = m[1];
 				hashVal = m[2];
 			}
 			url = req.toUrl(name + EXTENSION);
 
-			// For Optimization. The url is "empty:" if excluded.
+			// For Optimization. The name is "empty:" if excluded.
 			if (RE_EMPTY.test(url)) {
 				onLoad(UNDEFINED);
 			}
-			else {
-				text.get(url, function(data) {
-					content = amdify(data, hashVal);
-					if (config.isBuild) {
-						buildMap[name] = content;
-					}
 
-					onLoad.fromText(name, content);  
-					// On requirejs version below '2.1.0', 
-					// need to manually require the module after the call to onLoad.fromText()
-					if (cmpVersion(REQUIRE_VERSION, "2.1.0") < 0) {
-						req([ name ], onLoad);
-					}	
-				});
-			}
+			text.get(url, function(data) {
+				content = amdify(data, hashVal);
+				if (config.isBuild) {
+					buildMap[name] = content;
+				}
+
+				onLoad.fromText(name, content);  
+				// On requirejs version below '2.1.0', 
+				// need to manually require the module after the call to onLoad.fromText()
+				if (cmpVersion(REQUIRE_VERSION, "2.1.0") < 0) {
+					req([ name ], onLoad);
+				}	
+			});
 		},
 
 		write : function (pluginName, moduleName, write) { 
 			var m;
 			var content;
 
-			if (m = PATTERN.exec(moduleName)) {
+			if ((m = PATTERN.exec(moduleName))) {
 				moduleName = m[1];
 			}
 
