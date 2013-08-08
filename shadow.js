@@ -58,14 +58,15 @@ define([ "text" ], function (text) {
 			var hashVal;
 			var content;
 			var url;
+			var realName = name;
 
 			// The name is like 'jquery.form#$=jquery&exports=$',
 			// So, if macthed, m[1] is 'jquery.form', m[2] is '$=jquery&exports=$'
 			if ((m = PATTERN.exec(name))) {
-				name = m[1];
+				realName = m[1];
 				hashVal = m[2];
 			}
-			url = req.toUrl(name + EXTENSION);
+			url = req.toUrl(realName + EXTENSION);
 
 			// For Optimization. The url is "empty:" if excluded.
 			if (RE_EMPTY.test(url)) {
@@ -89,15 +90,10 @@ define([ "text" ], function (text) {
 		},
 
 		write : function (pluginName, moduleName, write) { 
-			var m;
 			var content;
 
-			if ((m = PATTERN.exec(moduleName))) {
-				moduleName = m[1];
-			}
-
 			if (moduleName in buildMap) {
-				content = text.jsEscape(buildMap[moduleName]);
+				content = buildMap[moduleName];
 				write.asModule(pluginName + "!" + moduleName, content);
 			}
 		}
