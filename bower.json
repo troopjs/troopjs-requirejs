@@ -1,8 +1,11 @@
 {
 	"name": "troopjs-requirejs",
-	"version": "2.0.2-1",
+	"version": "2.1.0-2",
 	"ignore": [
 		"**/.*",
 		"node_modules"
-	]
+	],
+	"dependencies": {
+		"requirejs": "~2.1"
+	}
 }
