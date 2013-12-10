@@ -1,4 +1,4 @@
-/**
+/*
  * TroopJS requirejs/template
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  *
@@ -131,7 +131,7 @@ define(function TemplateModule() {
 		"\r" : "\\r"
 	};
 
-	/**
+	/*
 	 * Compiles template
 	 *
 	 * @param body Template body
