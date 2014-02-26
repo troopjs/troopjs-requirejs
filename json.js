@@ -17,8 +17,8 @@ define([
 	return {
 		"load": function (name, req, load, config) {
 			var key = name;
+			var query = "";
 			var matches;
-			var query;
 
 			if ((matches = PATTERN.exec(name)) !== NULL) {
 				name = matches[1];
@@ -26,9 +26,7 @@ define([
 			}
 
 			text.get(req.toUrl(name), function (source) {
-				var compiled = query !== UNDEFINED
-					? select.call(JSON.parse(source), query)
-					: JSON.parse(source);
+				var compiled = select.call(JSON.parse(source), query);
 
 				if (config.isBuild) {
 					buildMap[key] = compiled;
@@ -40,7 +38,7 @@ define([
 
 		write : function (pluginName, moduleName, write) {
 			if (moduleName in buildMap) {
-				write("define('" + pluginName + "!" + moduleName  + "', function () { return '" + JSON.stringify(buildMap[moduleName]) + "';});\n");
+				write.asModule(pluginName + "!" + moduleName, JSON.stringify(buildMap[moduleName]));
 			}
 		}
 	};
