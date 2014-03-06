@@ -1,9 +1,16 @@
-/*
- * TroopJS requirejs/multiversion
- * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
+/**
+ * @license MIT http://troopjs.mit-license.org/
  */
 define(function MultiversionModule() {
 	"use strict";
+
+	/**
+	 * RequireJS multiversion plugin
+	 * @class requirejs.multiversion
+	 * @singleton
+	 */
+
+	//TODO Add usage docs
 
 	var RE = /(.+?)#(.+)$/;
 	var CONTEXTS = require.s.contexts;

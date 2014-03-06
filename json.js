@@ -1,7 +1,6 @@
-/*
-* TroopJS requirejs/json
-* @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
-*/
+/**
+ * @license MIT http://troopjs.mit-license.org/
+ */
 define([
 	"text",
 	"troopjs-utils/select",
@@ -9,10 +8,18 @@ define([
 ], function (text, select) {
 	"use strict";
 
-	var UNDEFINED;
+	/**
+	 * RequireJS json plugin
+	 * @class requirejs.json
+	 * @singleton
+	 */
+
+	//TODO Add usage docs
+
 	var NULL = null;
 	var PATTERN = /(.+?)#(.+)$/;
 	var buildMap = {};
+
 
 	return {
 		"load": function (name, req, load, config) {
