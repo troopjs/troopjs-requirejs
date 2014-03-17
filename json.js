@@ -12,7 +12,7 @@ define([
 	 * RequireJS json plugin
 	 * @class requirejs.json
 	 * @extends requirejs.plugin
-	 * @singleton
+	 * @static
 	 */
 
 	//TODO Add usage docs

@@ -8,7 +8,7 @@ define([ "text" ], function (text) {
 	 * RequireJS shadow plugin
 	 * @class requirejs.shadow
 	 * @extends requirejs.plugin
-	 * @singleton
+	 * @static
 	 */
 
 	//TODO Add usage docs
