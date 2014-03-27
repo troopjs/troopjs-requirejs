@@ -1,7 +1,7 @@
 /**
  * @license MIT http://troopjs.mit-license.org/
  */
-define(function MultiversionModule() {
+define(function MultiVersionModule() {
 	"use strict";
 
 	/**
@@ -13,7 +13,9 @@ define(function MultiversionModule() {
 
 	//TODO Add usage docs
 
+	var UNDEFINED;
 	var RE = /(.+?)#(.+)$/;
+	var RE_EMPTY = /^empty:/;
 	var CONTEXTS = require.s.contexts;
 
 	return {
@@ -34,9 +36,14 @@ define(function MultiversionModule() {
 				}
 			}
 
-			parentRequire([ name ], function (module) {
-				onload(module);
-			}, onload.error);
+			if (RE_EMPTY.test(parentRequire.toUrl(name + ".js"))) {
+				onload(UNDEFINED);
+			}
+			else {
+				parentRequire([ name ], function (module) {
+					onload(module);
+				}, onload.error);
+			}
 		}
 	};
 });
