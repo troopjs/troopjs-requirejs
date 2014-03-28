@@ -5,8 +5,7 @@
  *
  * To change the configuration, refer to RequireJS [module config API](http://requirejs.org/docs/api.html#config-moduleconfig):
  *
- * 	requirejs.config(
- * 	{
-	 * 		config: { "component.name" : { "configOption" : "configValue", ...  } }
-	 * 	})
+ * 	requirejs.config({
+ * 		config: { "component.name" : { "configOption" : "configValue", ...  } }
+ * 	});
  */
