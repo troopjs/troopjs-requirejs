@@ -7,8 +7,9 @@ define(function MultiVersionModule() {
 	/**
 	 * RequireJS multiversion plugin
 	 * @class requirejs.multiversion
-	 * @extends requirejs.plugin
+	 * @extends External
 	 * @static
+	 * @alias plugin.requirejs
 	 */
 
 	//TODO Add usage docs

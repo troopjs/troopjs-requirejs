@@ -11,8 +11,9 @@ define([
 	/**
 	 * RequireJS json plugin
 	 * @class requirejs.json
-	 * @extends requirejs.plugin
+	 * @extends External
 	 * @static
+	 * @alias plugin.requirejs
 	 */
 
 	//TODO Add usage docs
