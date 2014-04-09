@@ -6,7 +6,7 @@
 		"node_modules"
 	],
 	"dependencies": {
-		"troopjs-utils": "~2",
+		"troopjs-util": "~3",
 		"requirejs": "~2"
 	}
 }

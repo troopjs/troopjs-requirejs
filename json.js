@@ -3,7 +3,7 @@
  */
 define([
 	"text",
-	"troopjs-utils/select",
+	"troopjs-util/select",
 	"poly/json"
 ], function (text, select) {
 	"use strict";
