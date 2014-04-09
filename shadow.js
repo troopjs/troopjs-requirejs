@@ -7,7 +7,6 @@ define([ "text" ], function (text) {
 	/**
 	 * RequireJS shadow plugin
 	 * @class requirejs.shadow
-	 * @extends External
 	 * @static
 	 * @alias plugin.requirejs
 	 */
