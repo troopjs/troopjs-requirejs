@@ -1,9 +1,17 @@
 /**
-* TroopJS requirejs/shadow
-* @license MIT http://troopjs.mit-license.org/ © Tristan Guo mailto:tristanguo@outlook.com
-*/
+ * @license MIT http://troopjs.mit-license.org/
+ */
 define([ "text" ], function (text) {
 	"use strict";
+
+	/**
+	 * RequireJS shadow plugin
+	 * @class requirejs.shadow
+	 * @static
+	 * @alias plugin.requirejs
+	 */
+
+	//TODO Add usage docs
 
 	var UNDEFINED;
 	var EXPORTS = "exports";
