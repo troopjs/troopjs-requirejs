@@ -46,7 +46,7 @@ define([
 
 		write : function (pluginName, moduleName, write) {
 			if (moduleName in buildMap) {
-				write.asModule(pluginName + "!" + moduleName, JSON.stringify(buildMap[moduleName]));
+				write("define('" + pluginName + "!" + moduleName + "', function(){ return " + JSON.stringify(buildMap[moduleName]) + "});");
 			}
 		}
 	};
