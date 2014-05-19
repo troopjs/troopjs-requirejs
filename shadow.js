@@ -37,7 +37,7 @@ define([ "text" ], function (text) {
 			}
 		}
 
-		return "define([ " + deps.join(", ") + " ], function (" + args.join(", ") + ") {\n"
+		return "define([" + deps.join(", ") + "], function (" + args.join(", ") + ") {\n"
 			+ scriptText
 			+ "});";
 	}
@@ -87,7 +87,7 @@ define([ "text" ], function (text) {
 						buildMap[name] = content;
 					}
 
-					onLoad.fromText(name, content);  
+					onLoad.fromText(name, content);
 					// On requirejs version below '2.1.0', 
 					// need to manually require the module after the call to onLoad.fromText()
 					if (cmpVersion(REQUIRE_VERSION, "2.1.0") < 0) {
@@ -102,7 +102,10 @@ define([ "text" ], function (text) {
 
 			if (moduleName in buildMap) {
 				content = buildMap[moduleName];
-				write.asModule(pluginName + "!" + moduleName, content);
+				content = content.replace(/define\(/, function (match) {
+					return match + '"' + [pluginName, moduleName].join('!') + '",';
+				});
+				write(content);
 			}
 		}
 	};
