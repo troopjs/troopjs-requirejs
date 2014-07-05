@@ -1,0 +1,33 @@
+{
+	"name": "troopjs-requirejs",
+	"description": "RequireJS plugins for TroopJS",
+	"version": "1.0.5",
+	"homepage": "https://github.com/troopjs/troopjs-requirejs",
+	"author": {
+		"name": "Mikael Karon",
+		"email": "mikael@karon.se"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/troopjs/troopjs-requirejs"
+	},
+	"bugs": {
+		"url": "https://github.com/troopjs/troopjs-requirejs/issues"
+	},
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://troopjs.mit-license.org/"
+		}
+	],
+	"scripts": {
+		"postinstall": "bower install",
+		"test": "buster test"
+	},
+	"devDependencies": {
+		"bower": "~1",
+		"buster": "~0.7",
+		"temp": "~0.6",
+		"requirejs": "~2.1"
+	}
+}
