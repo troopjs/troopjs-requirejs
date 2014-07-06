@@ -1,3 +1,3 @@
 define(function() {
-	return "dep1";
+	return "export1";
 });
