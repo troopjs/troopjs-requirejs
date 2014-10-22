@@ -1,7 +1,7 @@
 /**
  * @license MIT http://troopjs.mit-license.org/
  */
-define([ "text" ], function (text) {
+define([ "text"], function(text) {
 	"use strict";
 
 	/**
@@ -21,11 +21,18 @@ define([ "text" ], function (text) {
 	var REQUIRE_VERSION = require.version;
 	var buildMap = {};
 
-	function amdify (scriptText, hashVal) {
+	function amdify(scriptText, hashVal) {
 		var pattern = /([^=&]+)=([^&]+)/g;
 		var m;
 		var deps = [];
 		var args = [];
+
+		var isAmd = scriptText.indexOf("define(") !== -1;
+
+		// export amd module
+		if (isAmd) {
+			scriptText += ";\nreturn __export__;\n";
+		}
 
 		while (hashVal && (m = pattern.exec(hashVal))) {
 			if (m[1] === EXPORTS) {
@@ -37,9 +44,16 @@ define([ "text" ], function (text) {
 			}
 		}
 
-		return "define([" + deps.join(", ") + "], function (" + args.join(", ") + ") {\n"
-			+ scriptText
+		// minified content of shadow_define.js is reflected here
+		var define_stub = 'var args=arguments;var __export__;function define(r,n){var e=/\\(([^)]+)\\)/;function t(r){return e.exec(r.toString())[1].split(",").map(function(r){return r.trim()})}var a=t(n);var u=t(moduleDefine);var i=a.map(function(r){return args[u.indexOf(r)]});return __export__=n.apply(null,i)}';
+
+		var source;
+		source = "define([" + deps.join(", ") + "], function moduleDefine(" + args.join(", ") + ") {\n"
+							 + ( isAmd ? define_stub + ";\n" : "")
+							 + scriptText
 			+ "});";
+
+		return source;
 	}
 
 	function cmpVersion(a, b) {
@@ -61,7 +75,7 @@ define([ "text" ], function (text) {
 	}
 
 	return {
-		load : function (name, req, onLoad, config) {
+		load: function(name, req, onLoad, config) {
 			var m;
 			var hashVal;
 			var content;
@@ -92,17 +106,17 @@ define([ "text" ], function (text) {
 					// need to manually require the module after the call to onLoad.fromText()
 					if (cmpVersion(REQUIRE_VERSION, "2.1.0") < 0) {
 						req([ name ], onLoad);
-					}	
+					}
 				});
 			}
 		},
 
-		write : function (pluginName, moduleName, write) { 
+		write: function(pluginName, moduleName, write) {
 			var content;
 
 			if (moduleName in buildMap) {
 				content = buildMap[moduleName];
-				content = content.replace(/define\(/, function (match) {
+				content = content.replace(/define\(/, function(match) {
 					return match + '"' + [pluginName, moduleName].join('!') + '",';
 				});
 				write(content);

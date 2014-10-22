@@ -33,7 +33,7 @@ buster.testCase("plugin", function (run){
 		},
 		"shadow load non-amd module": function(done) {
 			this.require(['shadow!test/foo#dep1=test/dep1&dep2=test/dep2&exports=Foo'], function(foo) {
-				assert.equals(foo, "dep1,dep2,foo");
+				assert.equals(foo, "export1,export2,foo");
 				done();
 			});
 		}
